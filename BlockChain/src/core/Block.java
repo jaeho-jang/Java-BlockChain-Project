@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import util.Util;
 
 public class Block {
@@ -7,7 +9,7 @@ public class Block {
 	private int blockID;
 	private String previousBlockHash;
 	private int nonce;
-	private String data;
+	private ArrayList<Transaction> transactionList;
 	
 	public int getBlockID() {
 		return blockID;
@@ -25,14 +27,6 @@ public class Block {
 		this.nonce = nonce;
 	}
 	
-	public String getData() {
-		return data;
-	}
-	
-	public void setData(String data) {
-		this.data = data;
-	}
-	
 	public String getPreviousBlockHash() {
 		return previousBlockHash;
 	}
@@ -41,11 +35,15 @@ public class Block {
 		this.previousBlockHash = previousBlockHash;
 	}
 
-	public Block(int blockID, String previousBlockHash, int nonce, String data) {
+	public Block(int blockID, String previousBlockHash, int nonce, ArrayList transactionList) {
 		super();
 		this.blockID = blockID;
 		this.nonce = nonce;
-		this.data = data;
+		this.transactionList = transactionList;
+	}
+	
+	public void addTransaction(Transaction transaction) {
+		transactionList.add(transaction);
 	}
 	
 	public void getInformation() {
@@ -53,13 +51,20 @@ public class Block {
 		System.out.println("Block Number : " + getBlockID());
 		System.out.println("Previous Hash Value : " + getPreviousBlockHash());
 		System.out.println("Mining Variable Value : " + getNonce());
-		System.out.println("Block Data : " + getData());
+		System.out.println("Number of transactions : " + transactionList.size());
+		for(int i = 0; i < transactionList.size(); i++) {
+			System.out.println(transactionList.get(i).getInformation());
+		}
 		System.out.println("Block Hash : " + getBlockHash());
 		System.out.println("-------------------------------------");
 	}
 	
 	public String getBlockHash() {
-		return Util.getHash(data + nonce);
+		String transactionInformations = "";
+		for (int i = 0; i < transactionList.size(); i++) {
+			transactionInformations += transactionList.get(i).getInformation();
+		}
+		return Util.getHash(transactionInformations + nonce + previousBlockHash);
 	}
 	
 	public void mine() {
